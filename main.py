@@ -14,6 +14,7 @@ azure_endpoint = os.getenv('AZURE_OPENAI_ENDPOINT')
 
 # import the necessary modules
 from audio_agent import audio_speech_tool
+from wikipedia_tool import wikipedia_tool
 from langchain.agents import Tool, initialize_agent
 from langchain_openai import AzureChatOpenAI
 from langchain_openai import AzureOpenAIEmbeddings
@@ -75,6 +76,7 @@ tools.append(summary_tool)
 tools.append(document_tool)
 
 tools.append(audio_speech_tool)
+tools.append(wikipedia_tool)
 
 # append summary 
 
