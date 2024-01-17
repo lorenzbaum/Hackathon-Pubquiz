@@ -28,7 +28,8 @@ import langchain.tools
 from langchain import  LLMMathChain
 from langchain.agents import AgentExecutor
 from documents import document_tool
-from wikipedia_tool import wikipedia
+from wikipedia_tool import wikipedia_tool
+from math_tool import math_tool
 embeddings = AzureOpenAIEmbeddings(
     api_key=azure_api_key,
     api_version="2023-05-15",
@@ -84,11 +85,14 @@ tools.append(summary_tool)
 tools.append(document_tool)
 
 tools.append(audio_speech_tool)
+
 tools.append(wikipedia_tool)
 
 tools.append(tool_llm_math)
 
-tools.append()
+#tools.append(math_tool)
+
+
 
 #tools.append(wikipedia)
 
