@@ -2,6 +2,7 @@
 # Load OpenAI key from env
 
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
@@ -46,10 +47,7 @@ chain = prompt | llm
 
 
 from langchain.prompts import ChatPromptTemplate
-from langchain_core.documents import Document
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.document_loaders import TextLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.azure_openai import AzureOpenAIEmbeddings
 from langchain.vectorstores.chroma import Chroma
 
@@ -128,7 +126,7 @@ db.persist()
 
 # retriever
 
-from langchain_core.runnables import RunnableParallel, RunnablePassthrough
+from langchain_core.runnables import RunnablePassthrough
 
 from langchain.chains import create_retrieval_chain
 

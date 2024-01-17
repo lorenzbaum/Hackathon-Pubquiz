@@ -1,30 +1,16 @@
-import os
 import json
+import os
 from datetime import datetime
 
+from dotenv import load_dotenv
 from langchain.chat_models import AzureChatOpenAI
-from langchain.agents import initialize_agent, AgentType
-from langchain.embeddings.azure_openai import AzureOpenAIEmbeddings
-from langchain.tools import Tool
-from langchain.vectorstores.chroma import Chroma
-from functools import partial
-
-
-from langchain.chains.combine_documents import collapse_docs, split_list_of_docs
-from langchain.prompts import PromptTemplate
-from langchain.schema import StrOutputParser
-from langchain_core.prompts import format_document
-from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain.prompts import ChatPromptTemplate
+from langchain.tools import Tool
+from openai import AzureOpenAI
 
 # from langchain.document_loaders.json_loader import JSONLoader
 
-from openai import AzureOpenAI
-
-from dotenv import load_dotenv
 load_dotenv()
-
-
 
 azure_api_key_whisper = os.getenv('AZURE_OPENAI_API_KEY_WHISPER')
 azure_endpoint_whisper = os.getenv('AZURE_OPENAI_ENDPOINT_WHISPER')
@@ -47,37 +33,37 @@ llm = AzureChatOpenAI(
     azure_endpoint=azure_endpoint,
 )
 
+
 def get_transcript(audio_file):
     if not os.path.exists(audio_file):
         audio_file = "./data/" + audio_file
     client.audio.with_raw_response
     return client.audio.transcriptions.create(
-        file=open(audio_file, "rb"),            
+        file=open(audio_file, "rb"),
         model="whisper",
         language="de",
     ).text
 
 
 def init_transscript_json():
-
     directory_path = '.\PubAudio'
     audio_dict = {}
     # Iterate over files in the directory
     for filename in os.listdir(directory_path):
         file_path = os.path.join(directory_path, filename)
-        
+
         # Check if the current item is a file (not a subdirectory)
         if os.path.isfile(file_path):
             print(file_path)
             filename = os.path.basename(file_path)
             print(filename)
-            audio_dict[filename] = {'transcript': get_transcript(file_path), 'file_path': file_path, 'description': 'xxxxxx'}
-
-
+            audio_dict[filename] = {'transcript': get_transcript(file_path), 'file_path': file_path,
+                                    'description': 'xxxxxx'}
 
     # Open the file in write mode and use json.dump() to write the dictionary to the file
     with open(file_path, 'w') as file:
         json.dump(audio_dict, file)
+
 
 def load_data_from_json():
     with open(file_path, 'r') as file:
@@ -85,20 +71,14 @@ def load_data_from_json():
     return data
 
 
-
 # documents
 
 from langchain_core.documents import Document
 from langchain.chains.combine_documents import create_stuff_documents_chain
 
-
 documents = []
 
-
 speechs = load_data_from_json()
-
-
-
 
 for key in speechs:
     documents.append(
@@ -123,14 +103,17 @@ Question: {input}""")
 
 chain = prompt | llm
 
-document_prompt = ChatPromptTemplate.from_template("""Content: {page_content}                             
-Source: {source}
-Author: {author}
-Date: {date}
-Description: {description}""")
+document_prompt = ChatPromptTemplate.from_template(
+    """Content of speech: {page_content}                             
+Speaker: {author}
+Date of Speech: {date}
+Description of Speech: {description}
+""")
+
 
 def get_chain_input(user_input: str):
     return {"input": user_input, "context": documents}
+
 
 document_chain = get_chain_input | create_stuff_documents_chain(
     llm=llm,
@@ -138,9 +121,12 @@ document_chain = get_chain_input | create_stuff_documents_chain(
     document_prompt=document_prompt,
 )
 
-
 audio_speech_tool = Tool(
     name="Speech Summary",
     func=document_chain.invoke,
-    description="Use this tool to do a summary of speeches.",
+    description="""Use this tool to get an information of speeches from German politicians on important events: 
+                - christmas speech 2019 of Frank-Walter Steinmeyer
+                - new years eve speech 2016 of Angela Merkel
+                - new years eve speech 2023 of Olaf Scholz
+                """
 )
