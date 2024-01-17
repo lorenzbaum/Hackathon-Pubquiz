@@ -2,3 +2,6 @@ venv
 .env
 /.idea/*
 /chroma2/*
+
+__pycache__/
+.DS_Store
