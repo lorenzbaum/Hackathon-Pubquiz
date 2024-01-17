@@ -225,4 +225,4 @@ for meta in unique_metadatas:
 
 #%%
 
-document_tool.run("Welcher Paragraph des deutschen Strafgesetzbuch handelt von Beihilfe?")
+# document_tool.run("Welcher Paragraph des deutschen Strafgesetzbuch handelt von Beihilfe?")
