@@ -1,15 +1,15 @@
-#%%
+# %%
 # Load OpenAI key from env
 
 import os
 from dotenv import load_dotenv
+
 load_dotenv(override=True)
 
 azure_api_key = os.getenv('AZURE_OPENAI_API_KEY')
 azure_endpoint = os.getenv('AZURE_OPENAI_ENDPOINT')
 
-
-#%%
+# %%
 
 # create llm instance
 
@@ -22,7 +22,7 @@ llm = AzureChatOpenAI(
     azure_endpoint=azure_endpoint,
 )
 
-#%%
+# %%
 from langchain.prompts import ChatPromptTemplate
 
 prompt = ChatPromptTemplate.from_template("""Answer the following question based only on the provided context:
@@ -42,7 +42,7 @@ chain = prompt | llm
 ##    }
 ##)"""
 
-#%%
+# %%
 
 
 from langchain.prompts import ChatPromptTemplate
@@ -124,7 +124,7 @@ db.persist()
 
 """
 
-#%%
+# %%
 
 # retriever
 
@@ -138,7 +138,7 @@ retrieval_chain = {"input": RunnablePassthrough()} | create_retrieval_chain(retr
 
 retrieval_chain.invoke("What is the name of the main characters and a side character in Romeo and Juliet?")
 
-#%%
+# %%
 from langchain.tools import Tool
 
 document_tool = Tool(
@@ -146,30 +146,32 @@ document_tool = Tool(
     func=retrieval_chain.invoke,
     description="""
     Use this tool to get documents for answering questions around the following topics: 
-    - Gesetztestexte
-    - Popular
-    - Sherlock Holmes
+    - Gesetztestexte    
     - STVO / Straßen Verkehrs Ordnung
-    - the company "Analytical Software"
-    - https//www.analytical-software.de/en
-    - https//www.analytical-software.de/en/business-intelligence/
-    - https//www.analytical-software.de/en/colleagues/
-    - https//www.analytical-software.de/en/data-science-business-intelligence/
-    - https//www.analytical-software.de/en/enterprise-analytical-systems/
-    - https//www.analytical-software.de/en/it-systeme/
-    - https//www.analytical-software.de/en/life-science/
-    - https//www.analytical-software.de/en/machine-learning/
-    - https//www.analytical-software.de/en/software-engineering/
-    - https//www.analytical-software.de/en/systems-development-and-operations/
-    - https//www.analytical-software.de/team/
+    - Strafgesetzbuch
+
+    - Popular
+
+    - Sherlock Holmes
     - "Das Geschenk der Weisen" (im Original "The Gift of the Magi", als dt. Ausgabe auch "Die Gabe der Weisen") von O. Henry
     - Romeo And Juliet / Romea und Julia von William Shakespeare
-    - Strafgesetzbuch
+
+    - the company "HMS Analytical Software GmbH" and its Website, e.g., Address
+    - HMS Analytical Software: General information from the main page
+    - HMS Analytical Software: business intelligence
+    - HMS Analytical Software: colleagues
+    - HMS Analytical Software: data-science-business-intelligence
+    - HMS Analytical Software: enterprise-analytical-systems
+    - HMS Analytical Software: it-systems
+    - HMS Analytical Software: life-science
+    - HMS Analytical Software: machine-learning
+    - HMS Analytical Software: software-engineering
+    - HMS Analytical Software: systems-development-and-operations
+    - HMS Analytical Software: team
     """
 )
 
-
-#%%
+# %%
 """
 db_data = (db._collection.get(include=['documents', 'metadatas', 'embeddings']))
 
@@ -181,48 +183,34 @@ for metadata in db_data['metadatas']:
 
 for meta in unique_metadatas:
     print(meta)
-    print("------------------------")
 
 """
 """
 {'source': 'Gesetztestexte'}
-------------------------
 {'source': 'Popular'}
-------------------------
 {'source': 'SherlockHolmes'}
-------------------------
 {'source': 'STVO'}
-------------------------
 {'source': 'https//www.analytical-software.de/en'}
-------------------------
 {'source': 'https//www.analytical-software.de/en/business-intelligence/'}
-------------------------
 {'source': 'https//www.analytical-software.de/en/colleagues/'}
-------------------------
 {'source': 'https//www.analytical-software.de/en/data-science-business-intelligence/'}
-------------------------
 {'source': 'https//www.analytical-software.de/en/enterprise-analytical-systems/'}
-------------------------
 {'source': 'https//www.analytical-software.de/en/it-systeme/'}
-------------------------
 {'source': 'https//www.analytical-software.de/en/life-science/'}
-------------------------
 {'source': 'https//www.analytical-software.de/en/machine-learning/'}
-------------------------
 {'source': 'https//www.analytical-software.de/en/software-engineering/'}
-------------------------
 {'source': 'https//www.analytical-software.de/en/systems-development-and-operations/'}
-------------------------
 {'source': 'https//www.analytical-software.de/team/'}
-------------------------
 {'source': './PubTexts/GiftOfTheMagi.txt'}
-------------------------
 {'source': './PubTexts/RomeoAndJuliet.txt'}
-------------------------
 {'source': './PubTexts/Strafgesetzbuch.txt'}
-------------------------
 """
 
-#%%
+# %%
 
-# document_tool.run("Welcher Paragraph des deutschen Strafgesetzbuch handelt von Beihilfe?")
+if __name__ == "__main__":
+    print(document_tool.run("Welcher Paragraph des deutschen Strafgesetzbuch handelt von Beihilfe?"))
+    print(document_tool.run("What is the street number of Sherlock Holmes?"))
+    print(document_tool.run("Was ist die Wurzel der Postleitzahl von HMS Analytical Software?"))
+    print(document_tool.run("Wie schnell darf ein Fahrzeug bis 7.5 Tonnen außerorts fahren?"))
+    print(document_tool.run("Wie viele jahre sind seit der Mondlandung und dem Unglück 9/11 vergangen?"))
