@@ -25,8 +25,10 @@ from langchain.prompts import ChatPromptTemplate
 from langchain.tools import Tool
 from langchain.tools.ddg_search import DuckDuckGoSearchRun
 import langchain.tools
+from langchain import  LLMMathChain
 from langchain.agents import AgentExecutor
 from documents import document_tool
+from wikipedia_tool import wikipedia
 embeddings = AzureOpenAIEmbeddings(
     api_key=azure_api_key,
     api_version="2023-05-15",
@@ -48,8 +50,14 @@ prompt = hub.pull("hwchase17/openai-functions-agent")
 prompt.messages
 
 
-#llm_math = LLMMathChain.from_llm(llm, verbose=True)
+llm_math = LLMMathChain.from_llm(llm, verbose=True)
 
+
+tool_llm_math = Tool.from_function(
+    func = llm_math.run,
+    name = "calculate mathematical questions",
+    description = "Use math for questions",
+)
 
 ddg = DuckDuckGoSearchRun()
 
@@ -78,6 +86,12 @@ tools.append(document_tool)
 tools.append(audio_speech_tool)
 tools.append(wikipedia_tool)
 
+tools.append(tool_llm_math)
+
+tools.append()
+
+#tools.append(wikipedia)
+
 # append summary 
 
 agent = initialize_agent(
@@ -94,6 +108,5 @@ agent = initialize_agent(
 
 
 #agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-
-agent.invoke({"input": "Who does the Angela Merkel address in her new years speech 2016?"})
+agent.invoke({"input": "How much is 2+2"})
 
