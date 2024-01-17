@@ -13,14 +13,12 @@ azure_endpoint = os.getenv('AZURE_OPENAI_ENDPOINT')
 
 
 # import the necessary modules
-
+from audio_agent import audio_speech_tool
 from langchain.agents import Tool, initialize_agent
 from langchain_openai import AzureChatOpenAI
 from langchain_openai import AzureOpenAIEmbeddings
-from langchain.vectorstores.chroma import Chroma
 from langchain import hub
 from langchain.agents import initialize_agent, AgentType
-from langchain.chains import LLMMathChain
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain.prompts import ChatPromptTemplate
 from langchain.tools import Tool
@@ -76,6 +74,8 @@ tools.append(summary_tool)
 
 tools.append(document_tool)
 
+tools.append(audio_speech_tool)
+
 # append summary 
 
 agent = initialize_agent(
@@ -86,12 +86,12 @@ agent = initialize_agent(
     handle_parsing_errors=True,
 )
 
-a = agent.run("Welcher Paragraph des deutschen Strafgesetzbuch handelt von Beihilfe?")
+#a = agent.run("Welcher Paragraph des deutschen Strafgesetzbuch handelt von Beihilfe?")
 
 #print(a)
 
 
 #agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
-agent.invoke({"input": "Welcher Paragraph des deutschen Strafgesetzbuch handelt von Beihilfe"})
+agent.invoke({"input": "Who does the Angela Merkel address in her new years speech 2016?"})
 
