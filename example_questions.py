@@ -8,4 +8,5 @@ EXAMPLE_QUESTIONS = [
     "Wie schnell darf ein Fahrzeug bis 7.5 Tonnen außerorts fahren?",  # 80 km/h
     "Was ist Hauptstadt des größten indischen Bundesstaats?",  # Lucknow
     "Wie viele jahre sind seit der Mondlandung und dem Unglück 9/11 vergangen?",  # 32
+    "Who does the Angela Merkel address in her new years speech 2016?",  # citizens of Germany
 ]
