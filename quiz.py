@@ -5,6 +5,7 @@ from langchain.embeddings.azure_openai import AzureOpenAIEmbeddings
 from langchain.tools import Tool
 from langchain.vectorstores.chroma import Chroma
 
+from openai import AzureOpenAI
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -54,3 +55,15 @@ agent = initialize_agent(
 )
 
 agent.invoke("What do you know about Pub Quizzes?")
+
+# whisper
+
+azure_api_key_whisper = os.getenv('AZURE_OPENAI_API_KEY_WHISPER')
+azure_endpoint_whisper = os.getenv('AZURE_OPENAI_ENDPOINT_WHISPER')
+
+whisper = AzureOpenAI(
+    api_key=azure_api_key_whisper,
+    azure_endpoint=azure_endpoint_whisper,
+    azure_deployment="whisper",
+    api_version="2023-09-01-preview",
+)
