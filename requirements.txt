@@ -6,3 +6,4 @@ tiktoken==0.5.2
 duckduckgo-search==4.1.1
 numexpr==2.8.8
 wikipedia==1.4.0
+wolframalpha==5.0.0
