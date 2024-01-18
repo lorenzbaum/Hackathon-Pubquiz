@@ -10,23 +10,23 @@ from langchain_core.prompts import format_document
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 
 
-def create_map_reduce_chain(llm: AzureChatOpenAI, document_prompt: PromptTemplate, summary_prompt: PromptTemplate) -> LLMChain:
-
+def create_map_reduce_chain(llm: AzureChatOpenAI, document_prompt: PromptTemplate,
+                            summary_prompt: PromptTemplate) -> LLMChain:
     partial_format_document = partial(format_document, prompt=document_prompt)
 
     # The chain we'll apply to each individual document.
     # Returns a summary of the document.
     map_chain = (
-        {"context": partial_format_document}
-        | summary_prompt
-        | llm
-        | StrOutputParser()
+            {"context": partial_format_document}
+            | summary_prompt
+            | llm
+            | StrOutputParser()
     )
 
     # A wrapper chain to keep the original Document metadata
     map_as_doc_chain = (
-        RunnableParallel({"doc": RunnablePassthrough(), "content": map_chain})
-        | (lambda x: Document(page_content=x["content"], metadata=x["doc"].metadata))
+            RunnableParallel({"doc": RunnablePassthrough(), "content": map_chain})
+            | (lambda x: Document(page_content=x["content"], metadata=x["doc"].metadata))
     ).with_config(run_name="Summarize (return doc)")
 
     # The chain we'll repeatedly apply to collapse subsets of the documents
@@ -36,19 +36,19 @@ def create_map_reduce_chain(llm: AzureChatOpenAI, document_prompt: PromptTemplat
         return "\n\n".join(partial_format_document(doc) for doc in docs)
 
     collapse_chain = (
-        {"context": format_docs}
-        | PromptTemplate.from_template("Collapse this content:\n\n{context}")
-        | llm
-        | StrOutputParser()
+            {"context": format_docs}
+            | PromptTemplate.from_template("Collapse this content:\n\n{context}")
+            | llm
+            | StrOutputParser()
     )
 
     def get_num_tokens(docs):
         return llm.get_num_tokens(format_docs(docs))
 
     def collapse(
-        docs,
-        config,
-        token_max=4000,
+            docs,
+            config,
+            token_max=4000,
     ):
         collapse_ct = 1
         while get_num_tokens(docs) > token_max:
@@ -64,10 +64,10 @@ def create_map_reduce_chain(llm: AzureChatOpenAI, document_prompt: PromptTemplat
     # into a final summary.
 
     reduce_chain = (
-        {"context": format_docs}
-        | PromptTemplate.from_template("Combine these summaries:\n\n{context}")
-        | llm
-        | StrOutputParser()
+            {"context": format_docs}
+            | PromptTemplate.from_template("Combine these summaries:\n\n{context}")
+            | llm
+            | StrOutputParser()
     ).with_config(run_name="Reduce")
 
     # The final full chain

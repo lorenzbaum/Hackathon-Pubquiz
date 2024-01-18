@@ -1,13 +1,12 @@
 import os
-from langchain.chat_models import AzureChatOpenAI
-from langchain.agents import initialize_agent, AgentType
-from langchain.embeddings.azure_openai import AzureOpenAIEmbeddings
-from langchain.tools import Tool
-from langchain.vectorstores.chroma import Chroma
-
-from openai import AzureOpenAI
 
 from dotenv import load_dotenv
+from langchain.agents import initialize_agent, AgentType
+from langchain.tools import Tool
+from langchain.vectorstores.chroma import Chroma
+from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
+from openai import AzureOpenAI
+
 load_dotenv()
 
 # LLM

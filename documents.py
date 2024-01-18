@@ -14,7 +14,7 @@ azure_endpoint = os.getenv('AZURE_OPENAI_ENDPOINT')
 
 # create llm instance
 
-from langchain.chat_models import AzureChatOpenAI
+from langchain_openai import AzureChatOpenAI
 
 llm = AzureChatOpenAI(
     api_key=azure_api_key,
@@ -48,7 +48,7 @@ chain = prompt | llm
 
 from langchain.prompts import ChatPromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.embeddings.azure_openai import AzureOpenAIEmbeddings
+from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
 from langchain.vectorstores.chroma import Chroma
 
 # document prompts
